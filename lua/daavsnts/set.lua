@@ -50,12 +50,3 @@ function DisableBackground()
 end
 
 vim.api.nvim_create_user_command("Dbg", DisableBackground, {})
-
-vim.api.nvim_create_autocmd("VimLeavePre", {
-	callback = function()
-		local listed_buffers = vim.fn.getbufinfo({ buflisted = 1 })
-		if #listed_buffers == 0 then
-			vim.cmd("enew")
-		end
-	end,
-})
