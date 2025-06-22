@@ -52,3 +52,5 @@ end
 vim.api.nvim_create_user_command("Dbg", DisableBackground, {})
 
 vim.keymap.set("n", "<leader>mir", "<cmd>CellularAutomaton make_it_rain<CR>")
+
+vim.opt.fillchars:append({ eob = " " })

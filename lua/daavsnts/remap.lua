@@ -20,51 +20,77 @@ vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<leader><leader>", function()
-  vim.cmd("so")
+	vim.cmd("so")
 end)
 
 --vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 vim.keymap.set("n", "<leader>f", function()
-  require("conform").format({ bufnr = 0 })
+	require("conform").format({ bufnr = 0 })
 end)
 
-vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, opts)
-vim.keymap.set("n", "gi", function() vim.lsp.buf.implementation() end, opts)
-vim.keymap.set("n", "go", function() vim.lsp.buf.type_definition() end, opts)
-vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
-vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
-vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
+vim.keymap.set("n", "gd", function()
+	vim.lsp.buf.definition()
+end, opts)
+vim.keymap.set("n", "gD", function()
+	vim.lsp.buf.declaration()
+end, opts)
+vim.keymap.set("n", "gi", function()
+	vim.lsp.buf.implementation()
+end, opts)
+vim.keymap.set("n", "go", function()
+	vim.lsp.buf.type_definition()
+end, opts)
+vim.keymap.set("n", "K", function()
+	vim.lsp.buf.hover()
+end, opts)
+vim.keymap.set("n", "<leader>vws", function()
+	vim.lsp.buf.workspace_symbol()
+end, opts)
+vim.keymap.set("n", "<leader>vd", function()
+	vim.diagnostic.open_float()
+end, opts)
+vim.keymap.set("n", "<leader>vca", function()
+	vim.lsp.buf.code_action()
+end, opts)
+vim.keymap.set("n", "<leader>vrr", function()
+	vim.lsp.buf.references()
+end, opts)
+vim.keymap.set("n", "<leader>vrn", function()
+	vim.lsp.buf.rename()
+end, opts)
+vim.keymap.set("i", "<C-h>", function()
+	vim.lsp.buf.signature_help()
+end, opts)
+vim.keymap.set("n", "[d", function()
+	vim.diagnostic.goto_next()
+end, opts)
+vim.keymap.set("n", "]d", function()
+	vim.diagnostic.goto_prev()
+end, opts)
 
 vim.keymap.set("n", "<leader>w", "<C-W>")
 
 vim.keymap.set("n", "<A-Up>", ":normal! 3k<CR>")
 vim.keymap.set("n", "<A-Down>", ":normal! 3j<CR>")
-vim.keymap.set("n", "<A-Right>", ":normal! 10l<CR>")
-vim.keymap.set("n", "<A-Left>", ":normal! 10h<CR>")
+--vim.keymap.set("n", "<A-Right>", ":normal! 10l<CR>")
+--vim.keymap.set("n", "<A-Left>", ":normal! 10h<CR>")
 
-vim.keymap.set("n", "<leader>y", "\"*y")
-vim.keymap.set('n', '<S-Up>', '<C-y>', { noremap = true, silent = true })
-vim.keymap.set('n', '<S-Down>', '<C-e>', { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>y", '"*y')
+vim.keymap.set("n", "<PageUp>", "<C-y>", { noremap = true, silent = true })
+vim.keymap.set("n", "<PageDown>", "<C-e>", { noremap = true, silent = true })
 
 -- Remap to copy the current LSP error message to the clipboard
-vim.api.nvim_set_keymap('n', '<leader>ce', ':lua Copy_lsp_error()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>ce", ":lua Copy_lsp_error()<CR>", { noremap = true, silent = true })
 
 function Copy_lsp_error()
-  local line = vim.fn.line('.') - 1
-  local diagnostics = vim.diagnostic.get(0, { lnum = line })
+	local line = vim.fn.line(".") - 1
+	local diagnostics = vim.diagnostic.get(0, { lnum = line })
 
-  if diagnostics and #diagnostics > 0 then
-    local message = diagnostics[1].message
-    vim.fn.setreg('+', message)
-    print('ESP Error copied: ' .. message)
-  else
-    print('No ESP error found on the current line.')
-  end
+	if diagnostics and #diagnostics > 0 then
+		local message = diagnostics[1].message
+		vim.fn.setreg("+", message)
+		print("ESP Error copied: " .. message)
+	else
+		print("No ESP error found on the current line.")
+	end
 end
