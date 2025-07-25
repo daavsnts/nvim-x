@@ -28,6 +28,20 @@ vim.keymap.set("n", "<leader>f", function()
 	require("conform").format({ bufnr = 0 })
 end)
 
+vim.keymap.set("v", "=", function()
+	local start_pos = vim.api.nvim_buf_get_mark(0, "<")
+	local end_pos = vim.api.nvim_buf_get_mark(0, ">")
+
+	require("conform").format({
+		range = {
+			start = { start_pos[1], start_pos[2] },
+			["end"] = { end_pos[1], end_pos[2] },
+		},
+		async = true,
+		--lsp_fallback = true,
+	})
+end, { silent = true })
+
 vim.keymap.set("n", "gd", function()
 	vim.lsp.buf.definition()
 end, opts)
@@ -79,10 +93,8 @@ vim.keymap.set("n", "<leader>y", '"*y')
 vim.keymap.set("n", "<PageUp>", "<C-y>", { noremap = true, silent = true })
 vim.keymap.set("n", "<PageDown>", "<C-e>", { noremap = true, silent = true })
 
--- Remap to copy the current LSP error message to the clipboard
-vim.api.nvim_set_keymap("n", "<leader>ce", ":lua Copy_lsp_error()<CR>", { noremap = true, silent = true })
-
-function Copy_lsp_error()
+-- Copy the current LSP error message to the clipboard
+vim.keymap.set("n", "<leader>ce", function()
 	local line = vim.fn.line(".") - 1
 	local diagnostics = vim.diagnostic.get(0, { lnum = line })
 
@@ -93,4 +105,12 @@ function Copy_lsp_error()
 	else
 		print("No ESP error found on the current line.")
 	end
-end
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<leader>la", "g;")
+vim.keymap.set("n", "<leader>lA", "g,")
+
+vim.keymap.set('n', '<leader>sl', "mz", { desc = "Save cursor position (mark z)" })
+
+vim.keymap.set('n', '<leader>ls', "`z", { desc = "Back to saved cursor position (mark z)" })
+

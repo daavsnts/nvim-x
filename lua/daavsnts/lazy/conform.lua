@@ -42,28 +42,75 @@ return {
 			})
 		end
 
+		local function has_prettierrc(ctx)
+			if not ctx or not ctx.filename then
+				return false
+			end
+			local root = util.root_pattern(
+				".prettierrc",
+				".prettierrc.json",
+				".prettierrc.js",
+				".prettierrc.cjs",
+				"prettier.config.js",
+				"prettier.config.cjs"
+			)(ctx.filename)
+			return has_any_file_in_root(root, {
+				".prettierrc",
+				".prettierrc.json",
+				".prettierrc.js",
+				".prettierrc.cjs",
+				"prettier.config.js",
+				"prettier.config.cjs",
+			})
+		end
+
 		conform.setup({
 			formatters_by_ft = {
-				javascript = { "eslint_d", "biome" },
-				javascriptreact = { "eslint_d", "biome" },
-				typescript = { "eslint_d", "biome" },
-				typescriptreact = { "eslint_d", "biome" },
-        javascriptvue = { "eslint_d", "biome" },
-        typescriptvue = { "eslint_d", "biome" },
+				javascript = { "eslint", "biome", "prettier" },
+				javascriptreact = { "eslint", "biome", "prettier" },
+				typescript = { "eslint", "biome", "prettier" },
+				typescriptreact = { "eslint", "biome", "prettier" },
+				javascriptvue = { "eslint", "biome", "prettier" },
+				typescriptvue = { "eslint", "biome", "prettier" },
+				html = { "prettier" },
+				css = { "prettier" },
+				json = { "prettier" },
+				markdown = { "prettier" },
 				lua = { "stylua" },
 			},
 			formatters = {
-				eslint_d = {
+				eslint = {
 					condition = function(_, ctx)
-						return has_eslintrc(ctx) and not has_biomerc(ctx)
+						return has_eslintrc(ctx) and not has_biomerc(ctx) and not has_prettierrc(ctx)
 					end,
+					command = vim.fn.executable("./node_modules/.bin/eslint") == 1
+						and "./node_modules/.bin/eslint"
+						or "eslint",
+					args = {
+						"--fix",
+						"--stdin",
+						"--stdin-filename",
+						"$FILENAME",
+					},
+					stdin = true,
+					timeout_ms = 10000,
 				},
 				biome = {
 					condition = function(_, ctx)
-						local defaultConditions = has_biomerc(ctx) and not has_eslintrc(ctx)
-						local noneConditions = not has_biomerc(ctx) and not has_eslintrc(ctx)
-						return defaultConditions or noneConditions
+						return has_biomerc(ctx) and not has_eslintrc(ctx) and not has_prettierrc(ctx)
 					end,
+					command = vim.fn.executable("./node_modules/.bin/biome") == 1 and "./node_modules/.bin/biome"
+						or "biome",
+					timeout_ms = 10000,
+				},
+				prettier = {
+					condition = function(_, ctx)
+						return has_prettierrc(ctx) and not has_eslintrc(ctx) and not has_biomerc(ctx)
+					end,
+					command = vim.fn.executable("./node_modules/.bin/prettier") == 1 and "./node_modules/.bin/prettier"
+						or "prettier",
+					args = { "--stdin-filepath", "$FILENAME" },
+					timeout_ms = 10000,
 				},
 			},
 		})
