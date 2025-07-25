@@ -38,7 +38,7 @@ return {
 					"ruby_lsp",
 					"hls",
 					"eslint",
-					"biome",
+					"biome"
 				},
         auto_update = false,
 				handlers = {

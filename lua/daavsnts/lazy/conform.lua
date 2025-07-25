@@ -77,14 +77,14 @@ return {
 				json = { "prettier" },
 				markdown = { "prettier" },
 				lua = { "stylua" },
+				java = { "lsp_format" },
 			},
 			formatters = {
 				eslint = {
 					condition = function(_, ctx)
 						return has_eslintrc(ctx) and not has_biomerc(ctx) and not has_prettierrc(ctx)
 					end,
-					command = vim.fn.executable("./node_modules/.bin/eslint") == 1
-						and "./node_modules/.bin/eslint"
+					command = vim.fn.executable("./node_modules/.bin/eslint") == 1 and "./node_modules/.bin/eslint"
 						or "eslint",
 					args = {
 						"--fix",
@@ -111,6 +111,15 @@ return {
 						or "prettier",
 					args = { "--stdin-filepath", "$FILENAME" },
 					timeout_ms = 10000,
+				},
+				lsp_format = {
+					format = function(params)
+						vim.lsp.buf.format({
+							bufnr = params.bufnr,
+							timeout_ms = params.timeout_ms,
+						})
+					end,
+          timeout_ms = 10000,
 				},
 			},
 		})
