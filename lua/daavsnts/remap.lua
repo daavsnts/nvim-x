@@ -107,10 +107,9 @@ vim.keymap.set("n", "<leader>ce", function()
 	end
 end, { noremap = true, silent = true })
 
+-- last changes
 vim.keymap.set("n", "<leader>la", "g;")
 vim.keymap.set("n", "<leader>lA", "g,")
-
-vim.keymap.set('n', '<leader>sl', "mz", { desc = "Save cursor position (mark z)" })
-
-vim.keymap.set('n', '<leader>ls', "`z", { desc = "Back to saved cursor position (mark z)" })
-
+-- marks
+vim.keymap.set('n', '<leader>sl', "mz")
+vim.keymap.set('n', '<leader>ls', "`z")
