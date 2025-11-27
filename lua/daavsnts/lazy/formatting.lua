@@ -21,12 +21,13 @@ return {
 				return false
 			end
 			local root =
-				util.root_pattern("eslint.config.js", ".eslintrc", ".eslintrc.js", ".eslintrc.json")(ctx.filename)
+				util.root_pattern("eslint.config.js", ".eslintrc", ".eslintrc.js", ".eslintrc.json", "eslint.config.mjs")(ctx.filename)
 			return has_any_file_in_root(root, {
 				"eslint.config.js",
 				".eslintrc",
 				".eslintrc.js",
 				".eslintrc.json",
+        "eslint.config.mjs",
 			})
 		end
 
@@ -66,23 +67,24 @@ return {
 
 		conform.setup({
 			formatters_by_ft = {
+				html = { "prettier" },
 				javascript = { "eslint", "biome", "prettier" },
 				javascriptreact = { "eslint", "biome", "prettier" },
 				typescript = { "eslint", "biome", "prettier" },
 				typescriptreact = { "eslint", "biome", "prettier" },
 				javascriptvue = { "eslint", "biome", "prettier" },
 				typescriptvue = { "eslint", "biome", "prettier" },
-				html = { "prettier" },
 				css = { "prettier" },
 				json = { "prettier" },
 				markdown = { "prettier" },
 				lua = { "stylua" },
 				java = { "lsp_format" },
+        htmlangular = { "prettier" },
 			},
 			formatters = {
 				eslint = {
 					condition = function(_, ctx)
-						return has_eslintrc(ctx) and not has_biomerc(ctx) and not has_prettierrc(ctx)
+						return has_eslintrc(ctx)
 					end,
 					command = vim.fn.executable("./node_modules/.bin/eslint") == 1 and "./node_modules/.bin/eslint"
 						or "eslint",
@@ -97,7 +99,7 @@ return {
 				},
 				biome = {
 					condition = function(_, ctx)
-						return has_biomerc(ctx) and not has_eslintrc(ctx) and not has_prettierrc(ctx)
+						return has_biomerc(ctx)
 					end,
 					command = vim.fn.executable("./node_modules/.bin/biome") == 1 and "./node_modules/.bin/biome"
 						or "biome",
@@ -105,7 +107,7 @@ return {
 				},
 				prettier = {
 					condition = function(_, ctx)
-						return has_prettierrc(ctx) and not has_eslintrc(ctx) and not has_biomerc(ctx)
+						return has_prettierrc(ctx)
 					end,
 					command = vim.fn.executable("./node_modules/.bin/prettier") == 1 and "./node_modules/.bin/prettier"
 						or "prettier",

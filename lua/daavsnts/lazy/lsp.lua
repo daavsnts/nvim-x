@@ -30,7 +30,7 @@ return {
 				ensure_installed = {
 					"lua_ls",
 					"cssls",
-					"volar",
+					"vue_ls",
 					"intelephense",
 					"ts_ls",
 					"html",
@@ -38,6 +38,7 @@ return {
 					"ruby_lsp",
 					"hls",
 					"eslint",
+          "angularls",
 					--"biome"
 				},
         auto_update = false,
@@ -110,11 +111,12 @@ return {
 					["<Up>"] = cmp.mapping.select_prev_item(cmp_select),
 					["<Down>"] = cmp.mapping.select_next_item(cmp_select),
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<C-Space>"] = cmp.mapping.complete(),
+					["<D-Space>"] = cmp.mapping.complete(),
 				}),
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" }, -- For luasnip users.
+          { name = "codecompanion" },
 				}, {
 					{ name = "buffer" },
 				}),

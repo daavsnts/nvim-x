@@ -14,6 +14,9 @@ return {
     require("nvim-tree").setup({
       sort_by = "case_sensitive",
       view = {
+        float = {
+          enable = true,
+        },
         adaptive_size = true,
       },
       renderer = {
@@ -23,6 +26,34 @@ return {
         dotfiles = true,
       },
     })
+
+    local function create_split(direction)
+      if direction == 'left' then
+        vim.cmd('set nosplitright')
+        vim.cmd('vsplit')
+        vim.cmd('set splitright')
+      elseif direction == 'right' then
+        vim.cmd('set splitright')
+        vim.cmd('vsplit')
+      elseif direction == 'down' then
+        vim.cmd('set splitbelow')
+        vim.cmd('split')
+      elseif direction == 'up' then
+        vim.cmd('set nosplitbelow')
+        vim.cmd('split')
+        vim.cmd('set splitbelow')
+      else
+        print("Invalid direction: use the arrows ← ↑ ↓ →")
+        return
+      end
+
+      api.tree.focus()
+    end
+
+    vim.keymap.set('n', '<leader>cs<Left>',  function() create_split('left') end)
+    vim.keymap.set('n', '<leader>cs<Right>', function() create_split('right') end)
+    vim.keymap.set('n', '<leader>cs<Down>',  function() create_split('down') end)
+    vim.keymap.set('n', '<leader>cs<Up>',    function() create_split('up') end)
 
     vim.keymap.set('n', '<leader>to', function()
       api.tree.focus()

@@ -101,8 +101,6 @@ vim.keymap.set("n", "<leader>ce", function()
 	if diagnostics and #diagnostics > 0 then
 		local message = diagnostics[1].message
 		vim.fn.setreg("+", message)
-		print("ESP Error copied: " .. message)
-	else
 		print("No ESP error found on the current line.")
 	end
 end, { noremap = true, silent = true })
@@ -110,6 +108,5 @@ end, { noremap = true, silent = true })
 -- last changes
 vim.keymap.set("n", "<leader>la", "g;")
 vim.keymap.set("n", "<leader>lA", "g,")
--- marks
-vim.keymap.set('n', '<leader>sl', "mz")
-vim.keymap.set('n', '<leader>ls', "`z")
+
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })

@@ -8,11 +8,19 @@ end
 
 return {
 	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		priority = 1000,
+	},
+
+	{
 		"Mofiqul/dracula.nvim",
 	},
+
 	{
 		"erikbackman/brightburn.vim",
 	},
+
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
@@ -21,6 +29,7 @@ return {
 			ColorMyPencils()
 		end,
 	},
+
 	{
 		"ellisonleao/gruvbox.nvim",
 		name = "gruvbox",
@@ -51,6 +60,7 @@ return {
 			})
 		end,
 	},
+
 	{
 		"folke/tokyonight.nvim",
 		config = function()
@@ -72,6 +82,7 @@ return {
 			})
 		end,
 	},
+
 	{
 		"rose-pine/neovim",
 		name = "rose-pine",
