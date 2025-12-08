@@ -8,26 +8,33 @@ return {
 		opts = {
 			adapters = {
 				http = {
-					gemini = function()
-						return require("codecompanion.adapters").extend("gemini", {
-							env = {
-								api_key = "GEMINI_API_KEY",
+					copilot = function()
+						return require("codecompanion.adapters").extend("copilot", {
+							timeout = 10000,
+						})
+					end,
+				},
+				acp = {
+					opencode = function()
+						return require("codecompanion.adapters").extend("opencode", {
+							commands = {
+								default = {
+									"opencode",
+									"acp",
+								},
 							},
 							schema = {
 								model = {
-									default = "gemini-3-pro",
+									default = "gemini-3-pro-preview",
 								},
 							},
 						})
-					end,
-					copilot = function()
-						return require("codecompanion.adapters").extend("copilot", {})
 					end,
 				},
 			},
 			strategies = {
 				chat = {
-					adapter = "copilot",
+					adapter = "opencode",
 				},
 				inline = {
 					adapter = "copilot",
@@ -41,6 +48,9 @@ return {
 							description = "Reject the suggested change",
 						},
 					},
+				},
+				cmd = {
+					adapter = "opencode",
 				},
 			},
 			display = {
@@ -56,28 +66,41 @@ return {
 			require("codecompanion").setup(opts)
 			vim.keymap.set(
 				{ "n", "v" },
-				"<leader>co",
+				"<leader>io",
 				"<cmd>CodeCompanionChat<cr>",
 				{ noremap = true, silent = true, desc = "Open CodeCompanion" }
 			)
 
 			vim.keymap.set(
 				"n",
-				"<leader>ci",
+				"<leader>ii",
 				"<cmd>CodeCompanion<cr>",
 				{ noremap = true, silent = true, desc = "Open CodeCompanion Inline" }
 			)
 
 			vim.keymap.set(
 				"v",
-				"<leader>ci",
+				"<leader>ii",
 				":'<,'>CodeCompanion<cr>",
 				{ noremap = true, silent = true, desc = "Open CodeCompanion Inline" }
 			)
 
-			vim.keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<cr>", { noremap = true, silent = true })
+			--[[
+			vim.keymap.set(
+				"v",
+				"<leader>ia",
+				"<cmd>CodeCompanionChat Add<cr>",
+				{ noremap = true, silent = true, desc = "CodeCompanion Add to Chat" }
+			)
+      ]]
+			--
 
-			vim.keymap.set({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true })
+			vim.keymap.set(
+				{ "n", "v" },
+				"<leader>ia",
+				"<cmd>CodeCompanionActions<cr>",
+				{ noremap = true, silent = true, desc = "CodeCompanion Actions" }
+			)
 		end,
 	},
 
@@ -137,7 +160,7 @@ return {
 
 	{
 		"zbirenbaum/copilot.lua",
-		dependencies = { "copilotlsp-nvim/copilot-lsp" },
+		--dependencies = { "copilotlsp-nvim/copilot-lsp" },
 		config = function()
 			require("copilot").setup({
 				suggestion = {

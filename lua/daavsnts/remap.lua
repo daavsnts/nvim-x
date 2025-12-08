@@ -108,5 +108,3 @@ end, { noremap = true, silent = true })
 -- last changes
 vim.keymap.set("n", "<leader>la", "g;")
 vim.keymap.set("n", "<leader>lA", "g,")
-
-vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })

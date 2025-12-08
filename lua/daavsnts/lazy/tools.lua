@@ -78,7 +78,7 @@ return {
 		end,
 	},
 
-	{
+  {
 		"chrisgrieser/nvim-spider",
 		config = function()
 			vim.keymap.set({ "n", "o", "x" }, "<A-Right>", "<cmd>lua require('spider').motion('w')<CR>")

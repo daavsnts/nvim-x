@@ -2,12 +2,16 @@ return {
 	{
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.8",
-		-- or                              , branch = '0.1.x',
-		dependencies = { "nvim-lua/plenary.nvim" },
-
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"jonarrien/telescope-cmdline.nvim", -- adiciona o cmdline
+		},
+		keys = {
+			{ ":", "<cmd>Telescope cmdline<cr>", desc = "Cmdline" },
+		},
 		config = function()
 			local builtin = require("telescope.builtin")
-			local actions = require("telescope.actions") -- Adicione esta linha para importar as ações
+			local actions = require("telescope.actions")
 
 			require("telescope").setup({
 				defaults = {
@@ -22,15 +26,26 @@ return {
 						},
 					},
 				},
+				extensions = {
+					cmdline = {
+						prefered = 'telescope',
+						auto_complete = true,
+					},
+				},
 			})
-			vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
-			vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
-			vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
-			vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
-			vim.keymap.set("n", "<leader>fs", builtin.git_status, {})
-			vim.keymap.set("n", "<leader>fk", builtin.keymaps, {})
+
+			require("telescope").load_extension("cmdline")
+
+			-- keymaps normais
+			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
+			vim.keymap.set("n", "<leader>ag", builtin.live_grep, { desc = "Live Grep" })
+			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Buffers" })
+			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help Tags" })
+			vim.keymap.set("n", "<leader>fs", builtin.git_status, { desc = "Git Status" })
+			vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find keymaps" })
 		end,
 	},
+  --[[
 	{
 		"junegunn/fzf.vim",
 		dependencies = {
@@ -41,10 +56,11 @@ return {
 			},
 		},
 		config = function()
-			vim.keymap.set("n", "<leader>ag", ":Ag <CR>")
-			vim.keymap.set("n", "<leader>rg", ":Rg <CR>")
+			vim.keymap.set("n", "<leader>ag", ":Ag <CR>", { desc = "Ag Search" })
+			vim.keymap.set("n", "<leader>rg", ":Rg <CR>", { desc = "Rg Search" })
 		end,
 	},
+  ]]--
 
 	{
 		"nvim-pack/nvim-spectre",
