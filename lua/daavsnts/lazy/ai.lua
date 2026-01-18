@@ -25,7 +25,10 @@ return {
 							},
 							schema = {
 								model = {
-									default = "gemini-3-pro-preview",
+									-- default = "claude-sonnet-4.5",
+									-- default = "gemini-3-pro",
+									default = "claude-opus-4.5",
+                  -- default = "gemini-3-flash"
 								},
 							},
 						})
@@ -105,68 +108,23 @@ return {
 	},
 
 	{
-		"echasnovski/mini.diff",
-		config = function()
-			local diff = require("mini.diff")
-			diff.setup({
-				-- Disabled by default
-				source = diff.gen_source.none(),
-			})
-		end,
-	},
-
-	{
-		"HakonHarnes/img-clip.nvim",
-		opts = {
-			filetypes = {
-				codecompanion = {
-					prompt_for_file_name = false,
-					template = "[Image]($FILE_PATH)",
-					use_absolute_path = true,
-				},
-			},
-		},
-	},
-
-	{
-		"MeanderingProgrammer/render-markdown.nvim", -- Make Markdown buffers look beautiful
-		ft = { "markdown", "codecompanion" },
-		opts = {
-			render_modes = true, -- Render in ALL modes
-			sign = {
-				enabled = false, -- Turn off in the status column
-			},
-			latex = { enabled = false },
-			overrides = {
-				filetype = {
-					codecompanion = {
-						html = {
-							tag = {
-								buf = { icon = " ", highlight = "CodeCompanionChatIcon" },
-								file = { icon = " ", highlight = "CodeCompanionChatIcon" },
-								group = { icon = " ", highlight = "CodeCompanionChatIcon" },
-								help = { icon = "󰘥 ", highlight = "CodeCompanionChatIcon" },
-								image = { icon = " ", highlight = "CodeCompanionChatIcon" },
-								symbols = { icon = " ", highlight = "CodeCompanionChatIcon" },
-								tool = { icon = "󰯠 ", highlight = "CodeCompanionChatIcon" },
-								url = { icon = "󰌹 ", highlight = "CodeCompanionChatIcon" },
-							},
-						},
-					},
-				},
-			},
-		},
-	},
-
-	{
 		"zbirenbaum/copilot.lua",
-		--dependencies = { "copilotlsp-nvim/copilot-lsp" },
+		-- dependencies = { "copilotlsp-nvim/copilot-lsp" },
+		cmd = "Copilot",
+		event = "InsertEnter",
 		config = function()
 			require("copilot").setup({
 				suggestion = {
 					auto_trigger = true,
 					keymap = {
 						accept = "<S-Tab>",
+					},
+				},
+				nes = {
+					enabled = false,
+					auto_trigger = false,
+					keymap = {
+						--accept = "<S-Tab>",
 					},
 				},
 				filetypes = {

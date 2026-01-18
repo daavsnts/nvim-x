@@ -4,10 +4,6 @@ return {
 		tag = "0.1.8",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"jonarrien/telescope-cmdline.nvim", -- adiciona o cmdline
-		},
-		keys = {
-			{ ":", "<cmd>Telescope cmdline<cr>", desc = "Cmdline" },
 		},
 		config = function()
 			local builtin = require("telescope.builtin")
@@ -26,26 +22,17 @@ return {
 						},
 					},
 				},
-				extensions = {
-					cmdline = {
-						prefered = 'telescope',
-						auto_complete = true,
-					},
-				},
 			})
 
-			require("telescope").load_extension("cmdline")
-
-			-- keymaps normais
 			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
-			vim.keymap.set("n", "<leader>ag", builtin.live_grep, { desc = "Live Grep" })
+			-- vim.keymap.set("n", "<leader>ag", builtin.live_grep, { desc = "Live Grep" })
 			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Buffers" })
 			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help Tags" })
 			vim.keymap.set("n", "<leader>fs", builtin.git_status, { desc = "Git Status" })
 			vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find keymaps" })
 		end,
 	},
-  --[[
+
 	{
 		"junegunn/fzf.vim",
 		dependencies = {
@@ -56,11 +43,10 @@ return {
 			},
 		},
 		config = function()
-			vim.keymap.set("n", "<leader>ag", ":Ag <CR>", { desc = "Ag Search" })
-			vim.keymap.set("n", "<leader>rg", ":Rg <CR>", { desc = "Rg Search" })
+			vim.keymap.set("n", "<leader>ag", ":Ag <CR>", { desc = "Ag Search", silent = true })
+			vim.keymap.set("n", "<leader>rg", ":Rg <CR>", { desc = "Rg Search", silent = true })
 		end,
 	},
-  ]]--
 
 	{
 		"nvim-pack/nvim-spectre",

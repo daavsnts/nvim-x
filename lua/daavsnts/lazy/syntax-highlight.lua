@@ -17,6 +17,7 @@ return {
 					"html",
 					"css",
 					"vue",
+          "regex",
 					"angular",
 				},
 

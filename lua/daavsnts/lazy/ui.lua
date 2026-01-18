@@ -1,5 +1,16 @@
 return {
 	{
+		"folke/snacks.nvim",
+		priority = 1000,
+		lazy = false,
+		---@type snacks.Config
+		opts = {
+			image = { enabled = true },
+		},
+	},
+
+	--[[
+	{
 		"stevearc/oil.nvim",
 		---@module 'oil'
 		---@type oil.SetupOpts
@@ -75,6 +86,99 @@ return {
 			vim.keymap.set("n", "<leader>to", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
 		end,
 	},
+  ]]
+	--
+
+	{
+		"nvim-tree/nvim-tree.lua",
+		version = "*",
+		lazy = false,
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+		},
+		config = function()
+			local api = require("nvim-tree.api")
+			-- disable netrw at the very start of your init.lua
+			vim.g.loaded_netrw = 1
+			vim.g.loaded_netrwPlugin = 1
+
+			require("nvim-tree").setup({
+				sort_by = "case_sensitive",
+				view = {
+					float = {
+						enable = true,
+					},
+					adaptive_size = true,
+				},
+				renderer = {
+					group_empty = true,
+				},
+				filters = {
+					dotfiles = true,
+				},
+			})
+
+			local function create_split(direction)
+				if direction == "left" then
+					vim.cmd("set nosplitright")
+					vim.cmd("vsplit")
+					vim.cmd("set splitright")
+				elseif direction == "right" then
+					vim.cmd("set splitright")
+					vim.cmd("vsplit")
+				elseif direction == "down" then
+					vim.cmd("set splitbelow")
+					vim.cmd("split")
+				elseif direction == "up" then
+					vim.cmd("set nosplitbelow")
+					vim.cmd("split")
+					vim.cmd("set splitbelow")
+				else
+					print("Invalid direction: use the arrows ← ↑ ↓ →")
+					return
+				end
+
+				api.tree.focus()
+			end
+
+			vim.keymap.set("n", "<leader>ts<Left>", function()
+				create_split("left")
+			end)
+			vim.keymap.set("n", "<leader>ts<Right>", function()
+				create_split("right")
+			end)
+			vim.keymap.set("n", "<leader>ts<Down>", function()
+				create_split("down")
+			end)
+			vim.keymap.set("n", "<leader>ts<Up>", function()
+				create_split("up")
+			end)
+
+			vim.keymap.set("n", "<leader>to", function()
+				api.tree.focus()
+			end)
+
+			vim.keymap.set("n", "<leader>tc", function()
+				api.tree.close()
+			end)
+
+			local prev = { new_name = "", old_name = "" } -- Prevents duplicate events
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "NvimTreeSetup",
+				callback = function()
+					local events = api.events
+					events.subscribe(events.Event.NodeRenamed, function(data)
+						if prev.new_name ~= data.new_name or prev.old_name ~= data.old_name then
+							data = data
+							Snacks.rename.on_rename_file(data.old_name, data.new_name)
+						end
+					end)
+				end,
+			})
+
+			vim.cmd([[hi NvimTreeNormal guibg=NONE ctermbg=NONE]])
+		end,
+	},
 
 	{
 		"romgrk/barbar.nvim",
@@ -115,12 +219,12 @@ return {
 			--                 :BufferCloseBuffersLeft
 			--                 :BufferCloseBuffersRight
 			-- Magic buffer-picking mode
-			map("n", "<C-p>", "<Cmd>BufferPick<CR>", opts)
+			map("n", "<leader>bp", "<Cmd>BufferPick<CR>", opts)
 			-- Sort automatically by...
-			map("n", "<Space>bb", "<Cmd>BufferOrderByBufferNumber<CR>", opts)
-			map("n", "<Space>bd", "<Cmd>BufferOrderByDirectory<CR>", opts)
-			map("n", "<Space>bl", "<Cmd>BufferOrderByLanguage<CR>", opts)
-			map("n", "<Space>bw", "<Cmd>BufferOrderByWindowNumber<CR>", opts)
+			-- map("n", "<Space>bb", "<Cmd>BufferOrderByBufferNumber<CR>", opts)
+			-- map("n", "<Space>bd", "<Cmd>BufferOrderByDirectory<CR>", opts)
+			-- map("n", "<Space>bl", "<Cmd>BufferOrderByLanguage<CR>", opts)
+			-- map("n", "<Space>bw", "<Cmd>BufferOrderByWindowNumber<CR>", opts)
 
 			-- Other:
 			-- :BarbarEnable - enables barbar (enabled by default)
@@ -159,14 +263,58 @@ return {
 		"j-hui/fidget.nvim",
 		version = "*",
 		opts = {
-      notification = {
-        window = {
-          winblend = 0,
-        },
-      }
+			notification = {
+				window = {
+					winblend = 0,
+				},
+			},
 		},
 	},
 
+	{
+		"rcarriga/nvim-notify",
+		config = function()
+			require("notify").setup({
+				background_colour = "#000000",
+			})
+		end,
+	},
+
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		opts = {
+			-- add any options here
+			lsp = {
+				override = {
+					["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+					["vim.lsp.util.stylize_markdown"] = true,
+					["cmp.entry.get_documentation"] = true,
+				},
+			},
+
+			routes = {
+				{
+					filter = {
+						event = "notify",
+						find = "Content is not an image",
+						kind = "warn",
+					},
+					opts = { skip = true },
+				},
+			},
+		},
+		dependencies = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+			-- OPTIONAL:
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			--   If not available, we use `mini` as the fallback
+			"rcarriga/nvim-notify",
+		},
+	},
+
+  --[[
 	{
 		"hat0uma/csvview.nvim",
 		---@module "csvview"
@@ -189,4 +337,5 @@ return {
 		},
 		cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
 	},
+  ]]--
 }

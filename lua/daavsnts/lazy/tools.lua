@@ -78,7 +78,7 @@ return {
 		end,
 	},
 
-  {
+	{
 		"chrisgrieser/nvim-spider",
 		config = function()
 			vim.keymap.set({ "n", "o", "x" }, "<A-Right>", "<cmd>lua require('spider').motion('w')<CR>")
@@ -101,5 +101,113 @@ return {
 		opts = {},
 		event = "VeryLazy",
 		enabled = vim.fn.has("nvim-0.10.0") == 1,
+	},
+
+	--[[
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		opts = {
+			-- your configuration comes here
+			-- or leave it empty to use the default settings
+			-- refer to the configuration section below
+		},
+		keys = {
+			{
+				"<leader>?",
+				function()
+					require("which-key").show({ global = true })
+				end,
+				desc = "Buffer Local Keymaps (which-key)",
+			},
+		},
+	},
+  ]]
+	--
+
+	{
+		"echasnovski/mini.diff",
+		config = function()
+			local diff = require("mini.diff")
+			diff.setup({
+				-- Disabled by default
+				source = diff.gen_source.none(),
+			})
+		end,
+	},
+
+	{
+		"HakonHarnes/img-clip.nvim",
+		opts = {
+			filetypes = {
+				codecompanion = {
+					prompt_for_file_name = false,
+					template = "[Image]($FILE_PATH)",
+					use_absolute_path = true,
+				},
+			},
+			keys = {
+				{ "<leader>pi", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
+			},
+		},
+	},
+
+	{
+		"MeanderingProgrammer/render-markdown.nvim", -- Make Markdown buffers look beautiful
+		ft = { "markdown", "codecompanion" },
+		opts = {
+			render_modes = true, -- Render in ALL modes
+			sign = {
+				enabled = false, -- Turn off in the status column
+			},
+			latex = { enabled = false },
+			overrides = {
+				filetype = {
+					codecompanion = {
+						html = {
+							tag = {
+								buf = { icon = " ", highlight = "CodeCompanionChatIcon" },
+								file = { icon = " ", highlight = "CodeCompanionChatIcon" },
+								group = { icon = " ", highlight = "CodeCompanionChatIcon" },
+								help = { icon = "󰘥 ", highlight = "CodeCompanionChatIcon" },
+								image = { icon = " ", highlight = "CodeCompanionChatIcon" },
+								symbols = { icon = " ", highlight = "CodeCompanionChatIcon" },
+								tool = { icon = "󰯠 ", highlight = "CodeCompanionChatIcon" },
+								url = { icon = "󰌹 ", highlight = "CodeCompanionChatIcon" },
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+
+	{
+		"kndndrj/nvim-dbee",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+		},
+		build = function()
+			require("dbee").install()
+		end,
+		config = function()
+			require("dbee").setup()
+			vim.keymap.set("n", "<leader>db", "<cmd>Dbee<cr>", { desc = "Database Explorer" })
+		end,
+	},
+
+	{
+		"mistweaverco/kulala.nvim",
+		keys = {
+			{ "<leader>kr", desc = "Send request" },
+			{ "<leader>ka", desc = "Send all requests" },
+			{ "<leader>kb", desc = "Open scratchpad" },
+		},
+		ft = { "http", "rest" },
+		opts = {
+			global_keymaps = true,
+			global_keymaps_prefix = "<leader>k",
+			kulala_keymaps_prefix = "",
+		},
 	},
 }

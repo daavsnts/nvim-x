@@ -19,9 +19,6 @@ vim.keymap.set("n", "<leader>Y", [["+Y]])
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 vim.keymap.set("n", "Q", "<nop>")
-vim.keymap.set("n", "<leader><leader>", function()
-	vim.cmd("so")
-end)
 
 --vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 vim.keymap.set("n", "<leader>f", function()
@@ -84,8 +81,8 @@ end, opts)
 
 vim.keymap.set("n", "<leader>w", "<C-W>")
 
-vim.keymap.set("n", "<A-Up>", ":normal! 3k<CR>")
-vim.keymap.set("n", "<A-Down>", ":normal! 3j<CR>")
+vim.keymap.set("n", "<A-Up>", ":normal! 3k<CR>", { silent = true })
+vim.keymap.set("n", "<A-Down>", ":normal! 3j<CR>", { silent = true })
 --vim.keymap.set("n", "<A-Right>", ":normal! 10l<CR>")
 --vim.keymap.set("n", "<A-Left>", ":normal! 10h<CR>")
 
@@ -95,13 +92,40 @@ vim.keymap.set("n", "<PageDown>", "<C-e>", { noremap = true, silent = true })
 
 -- Copy the current LSP error message to the clipboard
 vim.keymap.set("n", "<leader>ce", function()
-	local line = vim.fn.line(".") - 1
-	local diagnostics = vim.diagnostic.get(0, { lnum = line })
+	local line = vim.fn.line(".")
+	local messages = {}
 
-	if diagnostics and #diagnostics > 0 then
-		local message = diagnostics[1].message
-		vim.fn.setreg("+", message)
-		print("No ESP error found on the current line.")
+	-- Get LSP diagnostics
+	local lsp_diags = vim.diagnostic.get(0, { lnum = line - 1 })
+	if lsp_diags and #lsp_diags > 0 then
+		for _, diag in ipairs(lsp_diags) do
+			table.insert(messages, diag.message)
+		end
+	end
+
+	-- Get quickfix/location list errors on this line
+	local function get_qf_msgs()
+		local qflist = vim.fn.getqflist({ all = 1 }).items
+		for _, item in ipairs(qflist) do
+			if item.bufnr == vim.fn.bufnr("%") and item.lnum == line and item.text then
+				table.insert(messages, item.text)
+			end
+		end
+		local loclist = vim.fn.getloclist(0, { all = 1 }).items
+		for _, item in ipairs(loclist) do
+			if item.bufnr == vim.fn.bufnr("%") and item.lnum == line and item.text then
+				table.insert(messages, item.text)
+			end
+		end
+	end
+	get_qf_msgs()
+
+	if #messages > 0 then
+		local all_msgs = table.concat(messages, "\n")
+		vim.fn.setreg("+", all_msgs)
+		print("Copied error(s) on the current line.")
+	else
+		print("No error found on the current line.")
 	end
 end, { noremap = true, silent = true })
 

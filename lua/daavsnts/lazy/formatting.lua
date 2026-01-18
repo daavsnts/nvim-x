@@ -20,14 +20,19 @@ return {
 			if not ctx or not ctx.filename then
 				return false
 			end
-			local root =
-				util.root_pattern("eslint.config.js", ".eslintrc", ".eslintrc.js", ".eslintrc.json", "eslint.config.mjs")(ctx.filename)
+			local root = util.root_pattern(
+				"eslint.config.js",
+				".eslintrc",
+				".eslintrc.js",
+				".eslintrc.json",
+				"eslint.config.mjs"
+			)(ctx.filename)
 			return has_any_file_in_root(root, {
 				"eslint.config.js",
 				".eslintrc",
 				".eslintrc.js",
 				".eslintrc.json",
-        "eslint.config.mjs",
+				"eslint.config.mjs",
 			})
 		end
 
@@ -79,7 +84,8 @@ return {
 				markdown = { "prettier" },
 				lua = { "stylua" },
 				java = { "lsp_format" },
-        htmlangular = { "prettier" },
+				htmlangular = { "prettier" },
+        http = { "kulala" },
 			},
 			formatters = {
 				eslint = {
@@ -121,7 +127,12 @@ return {
 							timeout_ms = params.timeout_ms,
 						})
 					end,
-          timeout_ms = 10000,
+					timeout_ms = 10000,
+				},
+				kulala = {
+					command = "kulala-fmt",
+					args = { "format", "$FILENAME" },
+					stdin = false,
 				},
 			},
 		})
