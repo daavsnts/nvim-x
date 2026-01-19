@@ -15,6 +15,13 @@ return {
 					end,
 				},
 				acp = {
+					claude_code = function()
+						return require("codecompanion.adapters").extend("claude_code", {
+							env = {
+								CLAUDE_CODE_OAUTH_TOKEN = "cmd: age -d -i ~/.ssh/id_ed25519_github_personal ~/.claude-o-auth-key.age",
+							},
+						})
+					end,
 					opencode = function()
 						return require("codecompanion.adapters").extend("opencode", {
 							commands = {
@@ -28,7 +35,7 @@ return {
 									-- default = "claude-sonnet-4.5",
 									-- default = "gemini-3-pro",
 									default = "claude-opus-4.5",
-                  -- default = "gemini-3-flash"
+									-- default = "gemini-3-flash"
 								},
 							},
 						})
@@ -37,10 +44,10 @@ return {
 			},
 			strategies = {
 				chat = {
-					adapter = "opencode",
+					adapter = "claude_code",
 				},
 				inline = {
-					adapter = "copilot",
+					adapter = "claude_code",
 					keymaps = {
 						accept_change = {
 							modes = { n = "ga" },
@@ -53,7 +60,7 @@ return {
 					},
 				},
 				cmd = {
-					adapter = "opencode",
+					adapter = "claude_code",
 				},
 			},
 			display = {
