@@ -30,37 +30,42 @@ return {
 									"acp",
 								},
 							},
-							schema = {
-								model = {
-									-- default = "claude-sonnet-4.5",
-									-- default = "gemini-3-pro",
-									default = "claude-opus-4.5",
-									-- default = "gemini-3-flash"
-								},
-							},
 						})
 					end,
 				},
 			},
-			strategies = {
+			interactions = {
 				chat = {
-					adapter = "claude_code",
-				},
-				inline = {
-					adapter = "claude_code",
-					keymaps = {
-						accept_change = {
-							modes = { n = "ga" },
-							description = "Accept the suggested change",
-						},
-						reject_change = {
-							modes = { n = "gr" },
-							description = "Reject the suggested change",
+					adapter = { name = "opencode", model = "claude-haiku-4.5" },
+					opts = {
+						enabled = true,
+					},
+					callbacks = {
+						["on_ready"] = {
+							actions = {
+								"interactions.background.builtin.chat_make_title",
+							},
+							-- Enable "on_ready" callback which contains the title generation action
+							enabled = true,
 						},
 					},
 				},
+				inline = {
+					adapter = { name = "opencode", model = "gpt-4.1" },
+				},
 				cmd = {
-					adapter = "claude_code",
+					adapter = { name = "copilot", model = "gpt-4.1" },
+				},
+				background = {
+					adapter = {
+						name = "copilot",
+						model = "gpt-4.1",
+					},
+					chat = {
+						opts = {
+							enabled = true,
+						},
+					},
 				},
 			},
 			display = {

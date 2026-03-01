@@ -28,3 +28,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end, { silent = true, buffer = true })
   end,
 })
+
+vim.api.nvim_create_user_command("W", "w", {})
+vim.api.nvim_create_user_command("Q", "q", {})

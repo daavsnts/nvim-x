@@ -132,3 +132,21 @@ end, { noremap = true, silent = true })
 -- last changes
 vim.keymap.set("n", "<leader>la", "g;")
 vim.keymap.set("n", "<leader>lA", "g,")
+
+vim.keymap.set("n", "<leader>fr", function()
+  local file_path = vim.fn.expand("%:p")
+  local root = nil
+
+  local clients = vim.lsp.get_active_clients({ bufnr = 0 })
+  if #clients > 0 then
+    root = clients[1].config.root_dir
+  end
+
+  if not root then
+    root = vim.fn.getcwd()
+  end
+
+  local relative_path = file_path:gsub("^" .. vim.pesc(root) .. "/", "")
+  vim.fn.setreg("+", relative_path)
+  print("Relative path copied: " .. relative_path)
+end)

@@ -273,23 +273,28 @@ return {
 
 	{
 		"rcarriga/nvim-notify",
-		config = function()
-			require("notify").setup({
-				background_colour = "#000000",
-			})
-		end,
+		opts = {
+			background_colour = "#000000",
+			timeout = 3000,
+			stages = "fade",
+		},
 	},
 
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		opts = {
-			-- add any options here
 			lsp = {
 				override = {
 					["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 					["vim.lsp.util.stylize_markdown"] = true,
 					["cmp.entry.get_documentation"] = true,
+				},
+			},
+
+			views = {
+				notify = {
+					replace = true,
 				},
 			},
 
@@ -304,17 +309,31 @@ return {
 				},
 			},
 		},
+
+		config = function(_, opts)
+			require("noice").setup(opts)
+			vim.notify = require("notify")
+
+			vim.keymap.set("n", "<esc>", function()
+				require("notify").dismiss({ silent = true })
+			end, { desc = "Dismiss notification" })
+
+			vim.keymap.set("n", "<leader>nd", function()
+				require("notify").dismiss({ silent = true, pending = true })
+			end, { desc = "Dismiss all notifications" })
+
+			vim.keymap.set("n", "<leader>nh", function()
+				require("noice").cmd("history")
+			end, { desc = "Notification history" })
+		end,
+
 		dependencies = {
-			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
 			"MunifTanjim/nui.nvim",
-			-- OPTIONAL:
-			--   `nvim-notify` is only needed, if you want to use the notification view.
-			--   If not available, we use `mini` as the fallback
 			"rcarriga/nvim-notify",
 		},
 	},
 
-  --[[
+	--[[
 	{
 		"hat0uma/csvview.nvim",
 		---@module "csvview"
@@ -337,5 +356,22 @@ return {
 		},
 		cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
 	},
-  ]]--
+  ]]
+	--
+
+  -- {
+  --   "sphamba/smear-cursor.nvim",
+  --   opts = {
+  --     cursor_color = "#ffffff",
+  --   },
+  -- },
+
+	-- {
+	-- 	"rachartier/tiny-glimmer.nvim",
+	-- 	event = "VeryLazy",
+	-- 	priority = 10, -- Low priority to catch other plugins' keybindings
+	-- 	config = function()
+	-- 		require("tiny-glimmer").setup()
+	-- 	end,
+	-- },
 }

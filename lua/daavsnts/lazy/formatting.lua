@@ -2,137 +2,68 @@ return {
 	"stevearc/conform.nvim",
 	config = function()
 		local conform = require("conform")
-		local util = require("lspconfig.util")
 
-		local function has_any_file_in_root(root, filenames)
-			if not root then
-				return false
-			end
-			for _, filename in ipairs(filenames) do
-				if vim.fn.filereadable(root .. "/" .. filename) == 1 then
-					return true
-				end
-			end
-			return false
+		local eslint_files = {
+			"eslint.config.js",
+			"eslint.config.mjs",
+			".eslintrc",
+			".eslintrc.js",
+			".eslintrc.json",
+		}
+
+		local biome_files = { "biome.json", "biome.yaml", "biome.yml" }
+
+		local prettier_files = {
+			".prettierrc",
+			".prettierrc.json",
+			".prettierrc.js",
+			".prettierrc.cjs",
+			"prettier.config.js",
+			"prettier.config.cjs",
+		}
+
+		local function has_config(ctx, files)
+			return ctx
+				and ctx.filename
+				and vim.fs.find(files, {
+					upward = true,
+					path = vim.fs.dirname(ctx.filename),
+				})[1] ~= nil
 		end
 
-		local function has_eslintrc(ctx)
-			if not ctx or not ctx.filename then
-				return false
-			end
-			local root = util.root_pattern(
-				"eslint.config.js",
-				".eslintrc",
-				".eslintrc.js",
-				".eslintrc.json",
-				"eslint.config.mjs"
-			)(ctx.filename)
-			return has_any_file_in_root(root, {
-				"eslint.config.js",
-				".eslintrc",
-				".eslintrc.js",
-				".eslintrc.json",
-				"eslint.config.mjs",
-			})
-		end
-
-		local function has_biomerc(ctx)
-			if not ctx or not ctx.filename then
-				return false
-			end
-			local root = util.root_pattern("biome.json", "biome.yaml", "biome.yml")(ctx.filename)
-			return has_any_file_in_root(root, {
-				"biome.json",
-				"biome.yaml",
-				"biome.yml",
-			})
-		end
-
-		local function has_prettierrc(ctx)
-			if not ctx or not ctx.filename then
-				return false
-			end
-			local root = util.root_pattern(
-				".prettierrc",
-				".prettierrc.json",
-				".prettierrc.js",
-				".prettierrc.cjs",
-				"prettier.config.js",
-				"prettier.config.cjs"
-			)(ctx.filename)
-			return has_any_file_in_root(root, {
-				".prettierrc",
-				".prettierrc.json",
-				".prettierrc.js",
-				".prettierrc.cjs",
-				"prettier.config.js",
-				"prettier.config.cjs",
-			})
-		end
+		local js_ts_formatters = { "eslint_d", "biome", "prettier" }
 
 		conform.setup({
 			formatters_by_ft = {
 				html = { "prettier" },
-				javascript = { "eslint", "biome", "prettier" },
-				javascriptreact = { "eslint", "biome", "prettier" },
-				typescript = { "eslint", "biome", "prettier" },
-				typescriptreact = { "eslint", "biome", "prettier" },
-				javascriptvue = { "eslint", "biome", "prettier" },
-				typescriptvue = { "eslint", "biome", "prettier" },
+				javascript = js_ts_formatters,
+				javascriptreact = js_ts_formatters,
+				typescript = js_ts_formatters,
+				typescriptreact = js_ts_formatters,
+				vue = js_ts_formatters,
 				css = { "prettier" },
-				json = { "prettier" },
+				json = { "jq" },
 				markdown = { "prettier" },
 				lua = { "stylua" },
-				java = { "lsp_format" },
+				java = { "lsp" },
 				htmlangular = { "prettier" },
-        http = { "kulala" },
+				http = { "kulala-fmt" },
 			},
 			formatters = {
-				eslint = {
+				eslint_d = {
 					condition = function(_, ctx)
-						return has_eslintrc(ctx)
+						return has_config(ctx, eslint_files)
 					end,
-					command = vim.fn.executable("./node_modules/.bin/eslint") == 1 and "./node_modules/.bin/eslint"
-						or "eslint",
-					args = {
-						"--fix",
-						"--stdin",
-						"--stdin-filename",
-						"$FILENAME",
-					},
-					stdin = true,
-					timeout_ms = 10000,
 				},
 				biome = {
 					condition = function(_, ctx)
-						return has_biomerc(ctx)
+						return has_config(ctx, biome_files)
 					end,
-					command = vim.fn.executable("./node_modules/.bin/biome") == 1 and "./node_modules/.bin/biome"
-						or "biome",
-					timeout_ms = 10000,
 				},
 				prettier = {
 					condition = function(_, ctx)
-						return has_prettierrc(ctx)
+						return has_config(ctx, prettier_files)
 					end,
-					command = vim.fn.executable("./node_modules/.bin/prettier") == 1 and "./node_modules/.bin/prettier"
-						or "prettier",
-					args = { "--stdin-filepath", "$FILENAME" },
-					timeout_ms = 10000,
-				},
-				lsp_format = {
-					format = function(params)
-						vim.lsp.buf.format({
-							bufnr = params.bufnr,
-							timeout_ms = params.timeout_ms,
-						})
-					end,
-					timeout_ms = 10000,
-				},
-				kulala = {
-					command = "kulala-fmt",
-					args = { "format", "$FILENAME" },
-					stdin = false,
 				},
 			},
 		})

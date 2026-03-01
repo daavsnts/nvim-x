@@ -47,6 +47,20 @@ return {
 						})
 					end,
 
+					["cssls"] = function()
+						local lspconfig = require("lspconfig")
+						lspconfig.cssls.setup({
+							capabilities = capabilities,
+							settings = {
+								css = {
+									lint = {
+										unknownAtRules = "ignore",
+									},
+								},
+							},
+						})
+					end,
+
 					["lua_ls"] = function()
 						local lspconfig = require("lspconfig")
 						lspconfig.lua_ls.setup({

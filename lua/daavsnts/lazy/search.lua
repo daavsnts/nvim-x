@@ -24,13 +24,30 @@ return {
 				},
 			})
 
-			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
+			-- vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
 			-- vim.keymap.set("n", "<leader>ag", builtin.live_grep, { desc = "Live Grep" })
 			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Buffers" })
 			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help Tags" })
 			vim.keymap.set("n", "<leader>fs", builtin.git_status, { desc = "Git Status" })
 			vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find keymaps" })
 		end,
+	},
+
+	{
+		"danielfalk/smart-open.nvim",
+		branch = "0.2.x",
+		config = function()
+			require("telescope").load_extension("smart_open")
+
+      vim.keymap.set("n", "<leader>ff", ":Telescope smart_open<CR>", { desc = "Smart Open" })
+		end,
+		dependencies = {
+			"kkharji/sqlite.lua",
+			-- Only required if using match_algorithm fzf
+			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+			-- Optional.  If installed, native fzy will be used when match_algorithm is fzy
+			{ "nvim-telescope/telescope-fzy-native.nvim" },
+		},
 	},
 
 	{
