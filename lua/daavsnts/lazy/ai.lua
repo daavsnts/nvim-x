@@ -139,16 +139,40 @@ return {
 						--accept = "<S-Tab>",
 					},
 				},
-				filetypes = {
-					sh = function()
-						if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), "^%.env.*") then
-							-- disable for .env files
+				filetypes = setmetatable({ text = false, csv = false }, {
+					__index = function(_, _)
+						local name = vim.fs.basename(vim.api.nvim_buf_get_name(0))
+						if name:match("^%.env") then
 							return false
 						end
 						return true
 					end,
-				},
+				}),
 			})
 		end,
+	},
+
+	{
+		"coder/claudecode.nvim",
+		dependencies = { "folke/snacks.nvim" },
+		config = true,
+		keys = {
+			{ "<leader>cc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+			{ "<leader>cf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+			{ "<leader>cr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+			{ "<leader>cC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+			{ "<leader>cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
+			{ "<leader>cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+			{ "<leader>cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+			{
+				"<leader>cs",
+				"<cmd>ClaudeCodeTreeAdd<cr>",
+				desc = "Add file",
+				ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
+			},
+			-- Diff management
+			-- { "<leader>ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+			-- { "<leader>cr", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+		},
 	},
 }

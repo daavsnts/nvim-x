@@ -102,12 +102,31 @@ return {
 			vim.g.loaded_netrw = 1
 			vim.g.loaded_netrwPlugin = 1
 
+			local function on_attach(bufnr)
+				local opts = function(desc)
+					return {
+						desc = "nvim-tree: " .. desc,
+						buffer = bufnr,
+						noremap = true,
+						silent = true,
+						nowait = true,
+					}
+				end
+
+				-- Mantém os mapeamentos padrão do nvim-tree
+				api.config.mappings.default_on_attach(bufnr)
+
+				-- Alt + Enter pra definir a pasta como novo root
+				vim.keymap.set("n", "<M-CR>", api.tree.change_root_to_node, opts("CD"))
+			end
+
 			require("nvim-tree").setup({
+				on_attach = on_attach,
 				sort_by = "case_sensitive",
 				view = {
-					float = {
-						enable = true,
-					},
+					-- float = {
+					--     enable = true,
+					-- },
 					adaptive_size = true,
 				},
 				renderer = {
@@ -137,7 +156,6 @@ return {
 					print("Invalid direction: use the arrows ← ↑ ↓ →")
 					return
 				end
-
 				api.tree.focus()
 			end
 
@@ -153,11 +171,9 @@ return {
 			vim.keymap.set("n", "<leader>ts<Up>", function()
 				create_split("up")
 			end)
-
 			vim.keymap.set("n", "<leader>to", function()
 				api.tree.focus()
 			end)
-
 			vim.keymap.set("n", "<leader>tc", function()
 				api.tree.close()
 			end)
@@ -359,12 +375,12 @@ return {
   ]]
 	--
 
-  -- {
-  --   "sphamba/smear-cursor.nvim",
-  --   opts = {
-  --     cursor_color = "#ffffff",
-  --   },
-  -- },
+	-- {
+	--   "sphamba/smear-cursor.nvim",
+	--   opts = {
+	--     cursor_color = "#ffffff",
+	--   },
+	-- },
 
 	-- {
 	-- 	"rachartier/tiny-glimmer.nvim",

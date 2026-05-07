@@ -210,4 +210,16 @@ return {
 			kulala_keymaps_prefix = "",
 		},
 	},
+
+	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		build = "cd app && yarn install",
+		init = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+      vim.keymap.set("n", "<leader>mp", "<Plug>MarkdownPreview", { silent = true, noremap = false })
+      vim.keymap.set("n", "<leader>ms", "<Plug>MarkdownPreviewStop", { silent = true, noremap = false })
+		end,
+		ft = { "markdown" },
+	},
 }
